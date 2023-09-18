@@ -14,9 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Construct the TikTok profile picture URL
         const profilePictureUrl = `https://www.tiktok.com/@${username}`;
 
-        // Open the profile picture URL in a new tab
-        window.open(profilePictureUrl, '_blank');
+        // Create a hidden <a> element to trigger the download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = profilePictureUrl;
+        downloadLink.download = `${username}_profile_picture.jpg`; // You can set the desired file name here
 
-        resultDiv.innerHTML = 'Profile picture opened in a new tab.';
+        // Trigger the download
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        resultDiv.innerHTML = 'Profile picture downloaded.';
     });
 });
