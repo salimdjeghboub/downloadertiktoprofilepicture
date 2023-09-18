@@ -1,37 +1,28 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const fs = require('fs');
+document.addEventListener('DOMContentLoaded', () => {
+    const downloadButton = document.getElementById('downloadButton');
+    const tiktokUsername = document.getElementById('tiktokUsername');
+    const resultDiv = document.getElementById('result');
 
-async function downloadTikTokProfilePicture(username) {
-    try {
-        const profileUrl = `https://www.tiktok.com/@${username}`;
-        const response = await axios.get(profileUrl);
+    downloadButton.addEventListener('click', () => {
+        const username = tiktokUsername.value.trim();
 
-        if (response.status !== 200) {
-            throw new Error('Failed to fetch TikTok profile');
+        if (!username) {
+            resultDiv.innerHTML = 'Please enter a TikTok username.';
+            return;
         }
 
-        const $ = cheerio.load(response.data);
-        const profilePictureUrl = $('meta[property="og:image"]').attr('content');
+        // Execute the scraper.js script using child_process
+        const { exec } = require('child_process');
+        const command = `node scraper.js ${username}`;
 
-        if (!profilePictureUrl) {
-            throw new Error('Profile picture URL not found');
-        }
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                resultDiv.innerHTML = 'Failed to download profile picture.';
+                console.error('Error:', error.message);
+                return;
+            }
 
-        const imageResponse = await axios.get(profilePictureUrl, { responseType: 'stream' });
-        const imageName = `${username}_profile_picture.jpg`;
-        const imageStream = imageResponse.data.pipe(fs.createWriteStream(imageName));
-
-        return new Promise((resolve, reject) => {
-            imageStream.on('finish', () => resolve(imageName));
-            imageStream.on('error', reject);
+            resultDiv.innerHTML = 'Profile picture downloaded.';
         });
-    } catch (error) {
-        console.error('Error:', error.message);
-    }
-}
-
-const username = 'tiktok_username'; // Replace with the TikTok username you want to download the profile picture for
-downloadTikTokProfilePicture(username)
-    .then((imageName) => console.log(`Profile picture saved as ${imageName}`))
-    .catch((error) => console.error('Failed to download profile picture:', error));
+    });
+});
