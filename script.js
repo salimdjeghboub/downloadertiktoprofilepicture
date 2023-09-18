@@ -12,19 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Construct the TikTok profile picture URL
-        const profilePictureUrl = `https://www.tiktok.com/@${username}`;
+        const profilePictureUrl = 'https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/029bafaf4d492835e941edf9d6f544e5~c5_100x100.jpeg?x-expires=1695171600&x-signature=bMWQkLTaed7R6AYFvn0A7lZmkhM%3D';
 
-        // Create a hidden <a> element to trigger the download
-        const downloadLink = document.createElement('a');
-        downloadLink.href = profilePictureUrl;
-        downloadLink.download = `${username}_profile_picture.jpg`; // You can set the desired file name here
+        // Open the profile picture URL in a new tab
+        window.open(profilePictureUrl, '_blank');
 
-        // Trigger the download
-        downloadLink.style.display = 'none';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        resultDiv.innerHTML = 'Profile picture downloaded.';
+        resultDiv.innerHTML = 'Profile picture opened in a new tab.';
     });
 });
